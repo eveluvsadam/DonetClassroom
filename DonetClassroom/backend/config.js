@@ -67,7 +67,7 @@ const config = {
 
   requestTimeoutMs: Number(process.env.REQUEST_TIMEOUT_MS || 120000),
 
-  chatsDir: path.join(ROOT, 'data', 'chats'),
+  chatsDir: process.env.CHATS_DIR || path.join(ROOT, 'data', 'chats'),
   frontendDir: path.join(ROOT, 'frontend'),
   publicDir: path.join(ROOT, 'public'),
 

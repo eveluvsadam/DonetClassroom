@@ -739,3 +739,6 @@ input[type="range"]{ accent-color:var(--accent); width:150px; }
 .menu-item.danger{ color:#ff8f8a; }
 .menu-item.danger:hover{ background:rgba(255,95,87,.1); }
 .menu-sep{ height:1px; background:var(--border); margin:4px 6px; }
+
+/* Web search toggle (composer) */
+.icon-btn[aria-pressed="true"]{ color:var(--accent-hi); background:var(--accent-soft); }

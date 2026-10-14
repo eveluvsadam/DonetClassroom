@@ -8,6 +8,8 @@ A fast, lightweight, OLED-black AI assistant that runs on **your Mac** with loca
 - **Smarter Auto mode.** Local Ollama first, then Gemini, then OpenRouter.
 - **Safer keys.** The Gemini key travels in a request header, never in the URL, and is only kept in the browser when "Remember API key" is on.
 - **One source of truth.** The one-file build is generated from `frontend/` again, so the two versions can't drift apart.
+- **Web search.** Click the 🌐 button to search Wikipedia with each message (free, no key); the model gets the top results and cites them as links.
+- **Automated tests** run on every push (GitHub Actions).
 - **Express 5**, zero known vulnerabilities.
 
 **$0 by default.** Local when it can be. Free when it can't.
@@ -314,7 +316,7 @@ No `.env` file. Settings are accessed through the UI:
 - **Storage quota:** Limited by browser storage (usually 5–10 MB). Chats with many images may fill it up. Solution: export and clear.
 
 ### Full Version
-- **No web search:** The UI has a disabled web search button. Web search can be added by connecting a real search provider.
+- **Web search is Wikipedia only:** it's free and needs no key, but it won't find news or general web pages.
 - **No streaming for some providers:** Only works with providers that support OpenAI-compatible streaming (Ollama and OpenRouter do).
 
 ### General

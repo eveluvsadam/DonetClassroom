@@ -11,7 +11,8 @@
   "scripts": {
     "start": "node backend/server.js",
     "dev": "node --watch backend/server.js",
-    "build:onefile": "node tools/build-onefile.js"
+    "build:onefile": "node tools/build-onefile.js",
+    "test": "node --test \"test/*.test.js\""
   },
   "dependencies": {
     "express": "^5.3.0"

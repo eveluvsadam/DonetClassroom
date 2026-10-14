@@ -42,20 +42,24 @@ if (
 }
 const iconDataUri = 'data:image/svg+xml;base64,' + Buffer.from(iconSvg, 'utf8').toString('base64');
 
+// Every replacement below passes a function, not a string: in a replacement
+// *string*, "$$", "$&" and friends are special patterns, which silently turned
+// app.js's `const $$ = ...` into a second `const $` and broke the whole page.
+
 // 1. inline the favicon so it works from file://
-html = html.replace(/<link rel="icon"[^>]*>/, `<link rel="icon" href="${iconDataUri}" type="image/svg+xml" />`);
-html = html.replace(/<link rel="apple-touch-icon"[^>]*>/, `<link rel="apple-touch-icon" href="${iconDataUri}" />`);
+html = html.replace(/<link rel="icon"[^>]*>/, () => `<link rel="icon" href="${iconDataUri}" type="image/svg+xml" />`);
+html = html.replace(/<link rel="apple-touch-icon"[^>]*>/, () => `<link rel="apple-touch-icon" href="${iconDataUri}" />`);
 
 // 2. inline the stylesheet
 html = html.replace(
   '<link rel="stylesheet" href="/styles.css" />',
-  '<style>\n' + css + '\n</style>'
+  () => '<style>\n' + css + '\n</style>'
 );
 
 // 3. inline the app, switched into standalone mode
 html = html.replace(
   '<script src="/app.js" defer></script>',
-  '<script>\n' +
+  () => '<script>\n' +
   '/* Standalone mode: this page talks to Ollama and OpenRouter directly and\n' +
   '   keeps chats in this browser. No server, no build step. */\n' +
   'window.DONET_STANDALONE = true;\n' +
@@ -65,7 +69,7 @@ html = html.replace(
 // 4. a banner comment at the very top
 html = html.replace(
   '<!DOCTYPE html>',
-  '<!DOCTYPE html>\n<!--\n  DonetClassroom — single-file build (generated from the full version).\n' +
+  () => '<!DOCTYPE html>\n<!--\n  DonetClassroom — single-file build (generated from the full version).\n' +
   '  Open this file in a browser. Nothing to install.\n' +
   `  Built: ${new Date().toISOString()}\n-->`
 );

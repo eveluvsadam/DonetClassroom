@@ -428,6 +428,7 @@ const DEFAULT_SETTINGS = {
   allowPaid: false,
   contextLimit: 'auto',
   systemPrompt: DEFAULT_SYSTEM_PROMPT,
+  webSearch: false,
 
   ollamaUrl: 'http://localhost:11434',
   apiKey: '',
@@ -1106,10 +1107,44 @@ function referenceNote() {
   );
 }
 
-function toApiMessages(messages) {
+/**
+ * Web search via Wikipedia's public API: free, no key, and it allows browser
+ * requests (origin=*). Returns up to `limit` {title, url, extract}; [] on failure.
+ */
+async function searchWikipedia(query, limit = 3) {
+  const params = new URLSearchParams({
+    action: 'query', generator: 'search', gsrsearch: query.slice(0, 300), gsrlimit: String(limit),
+    prop: 'extracts|info', exintro: '1', explaintext: '1', exsentences: '6', inprop: 'url',
+    format: 'json', origin: '*',
+  });
+  try {
+    const res = await withTimeout((sig) => fetch('https://en.wikipedia.org/w/api.php?' + params, { signal: sig }), 8000);
+    if (!res.ok) return [];
+    const pages = Object.values((await res.json()).query?.pages || {});
+    return pages
+      .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
+      .filter((p) => p.extract)
+      .map((p) => ({ title: p.title, url: p.fullurl, extract: p.extract.slice(0, 1500) }));
+  } catch {
+    return [];
+  }
+}
+
+function searchNote(results) {
+  if (!results?.length) return '';
+  return (
+    '\n\nWeb search results (Wikipedia) for the user\'s latest message:\n' +
+    results.map((r, i) => `[${i + 1}] ${r.title} — ${r.url}\n${r.extract}`).join('\n\n') +
+    '\n\nUse these when they help, cite them as markdown links like [Title](url), and say so ' +
+    'plainly if they do not answer the question. Do not invent sources.'
+  );
+}
+
+function toApiMessages(messages, searchResults) {
   const out = [];
   const system = String(settings.systemPrompt || '').trim();
-  if (system) out.push({ role: 'system', content: system + referenceNote() });
+  const extra = referenceNote() + searchNote(searchResults);
+  if (system || extra) out.push({ role: 'system', content: (system + extra).trim() });
 
   for (const m of messages) {
     if (m.error || m.pending) continue;
@@ -1474,6 +1509,11 @@ async function runCompletion() {
         head.append(badge);
         if (meta.trimmed) head.append(el('span', { class: 'muted', title: 'Older messages were left out to fit the context window' }, 'context trimmed'));
         if (meta.note) head.append(el('span', { class: 'muted' }, meta.note));
+        if (settings.webSearch) {
+          const n = assistant.sources?.length || 0;
+          head.append(el('span', { class: 'muted', title: (assistant.sources || []).map((s) => s.title).join('\n') },
+            n ? `searched the web · ${n} source${n === 1 ? '' : 's'}` : 'web search found nothing'));
+        }
       }
       updateFooterProvider(meta);
     },
@@ -1500,11 +1540,22 @@ async function runCompletion() {
     },
   };
 
+  let searchResults = [];
+  if (settings.webSearch) {
+    const lastUser = [...chat.messages].reverse().find((m) => m.role === 'user' && m.text);
+    if (lastUser) {
+      const head = node.querySelector('.msg-head');
+      if (head) head.append(el('span', { class: 'muted' }, 'searching the web…'));
+      searchResults = await searchWikipedia(lastUser.text);
+      assistant.sources = searchResults.map(({ title, url }) => ({ title, url }));
+    }
+  }
+
   try {
     await Providers.chat({
       provider: settings.provider,
       model: settings.model,
-      messages: toApiMessages(chat.messages.filter((m) => m.id !== assistant.id)),
+      messages: toApiMessages(chat.messages.filter((m) => m.id !== assistant.id), searchResults),
       temperature: settings.temperature,
       maxTokens: settings.maxTokens,
       stream: settings.streaming,
@@ -1808,6 +1859,19 @@ async function takeScreenshot() {
 }
 
 $('#screenshotBtn').addEventListener('click', takeScreenshot);
+
+function syncWebSearchBtn() {
+  const btn = $('#webSearchBtn');
+  btn.setAttribute('aria-pressed', settings.webSearch ? 'true' : 'false');
+  btn.title = settings.webSearch ? 'Web search on (Wikipedia) — click to turn off' : 'Web search off — click to search Wikipedia with each message';
+}
+$('#webSearchBtn').addEventListener('click', () => {
+  settings.webSearch = !settings.webSearch;
+  saveSettings();
+  syncWebSearchBtn();
+  toast(settings.webSearch ? 'Web search on' : 'Web search off');
+});
+syncWebSearchBtn();
 
 /* ───────────────────────────────────────────────────── composer notices */
 
@@ -2826,7 +2890,8 @@ function buildSettingsPane(tab) {
         'A private AI classroom. Local first through Ollama, free cloud models through OpenRouter, and a hard stop in front of anything that costs money.'),
       setRow('Version', '2.0.0 · ' + (STANDALONE ? 'single-file build' : 'server build'), null),
       setRow('Privacy', 'No analytics, no telemetry, no tracking. Ratings on messages stay on this device.', null),
-      setRow('Web search', 'Not configured. The UI is ready for a real search provider; results are never faked.', null),
+      setRow('Web search', 'Searches Wikipedia (free, no key) with each message and gives the model the top results to cite. Your message text is sent to wikipedia.org.',
+        switchControl(settings.webSearch, (v) => { settings.webSearch = v; saveSettings(); syncWebSearchBtn(); })),
     ));
   }
 
