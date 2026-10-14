@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="oled">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<meta name="theme-color" content="#000000" />
+<meta name="description" content="DonetClassroom — a fast, private AI assistant running on local Ollama models and free cloud models." />
+<title>DonetClassroom</title>
+<link rel="icon" href="/public/icon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/public/icon.svg" />
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+
+<!-- ── icon sprite ─────────────────────────────────────────────────────── -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="M21.4 11.05 12.25 20.2a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.67 3.67 0 1 1 5.18 5.18l-9.2 9.2a1.83 1.83 0 1 1-2.59-2.6l8.49-8.48"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M2 7.5A1.5 1.5 0 0 1 3.5 6h3l1.2-2h8.6L17.5 6h3A1.5 1.5 0 0 1 22 7.5v10a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 17.5z"/><circle cx="12" cy="12.5" r="3.5"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m4 12.5 5 5L20 6.5"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0v13a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V7"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L20 8a2.8 2.8 0 0 0-4-4L4 16z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-sidebar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11m-5-5 5 5 5-5M4 20h16"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3m6-3v3M9 19v3m6-3v3M2 9h3m-3 6h3m14-6h3m-3 6h3"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19a4.5 4.5 0 0 0 .3-9 6 6 0 0 0-11.5 1.4A3.8 3.8 0 0 0 6.8 19z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 1 2-2h13"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12"/><circle cx="12" cy="12" r="2.6"/></symbol>
+  <symbol id="i-thumb-up" viewBox="0 0 24 24"><path d="M7 21V10l5-7 1 1a3 3 0 0 1 .6 2.6L13 10h5.5a2 2 0 0 1 2 2.4l-1.3 6A2 2 0 0 1 17.2 21z"/><path d="M7 10H4v11h3"/></symbol>
+  <symbol id="i-thumb-down" viewBox="0 0 24 24"><path d="M17 3v11l-5 7-1-1a3 3 0 0 1-.6-2.6L11 14H5.5a2 2 0 0 1-2-2.4l1.3-6A2 2 0 0 1 6.8 3z"/><path d="M17 14h3V3h-3"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18-2.5-3-2.5-15 0-18"/></symbol>
+  <symbol id="i-import" viewBox="0 0 24 24"><path d="M12 20V9m-5 5 5-5 5 5M4 4h16"/></symbol>
+  <symbol id="i-drag" viewBox="0 0 24 24"><circle cx="9" cy="6" r="1.4" fill="currentColor" stroke="none"/><circle cx="15" cy="6" r="1.4" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="9" cy="18" r="1.4" fill="currentColor" stroke="none"/><circle cx="15" cy="18" r="1.4" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3.5 13.7 9l5.3 1.7-5.3 1.7L12 18l-1.7-5.6L5 10.7 10.3 9z"/><path d="M18.5 3v3M20 4.5h-3"/></symbol>
+  <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></symbol>
+</defs></svg>
+
+<!-- ── app shell ───────────────────────────────────────────────────────── -->
+<div class="app" id="app">
+
+  <div class="scrim" id="scrim" hidden></div>
+
+  <!-- ── sidebar ───────────────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar" aria-label="Chats and settings">
+    <div class="sidebar-head">
+      <a class="brand" href="#" id="brandHome" aria-label="DonetClassroom home">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <rect x="1.25" y="1.25" width="29.5" height="29.5" rx="9" class="bm-frame"/>
+          <path d="M11 9h4.6c4.2 0 6.9 2.7 6.9 7s-2.7 7-6.9 7H11z" class="bm-d"/>
+          <path d="M11 16h6" class="bm-bar"/>
+        </svg>
+        <span class="brand-name">DonetClassroom</span>
+      </a>
+      <button class="icon-btn sidebar-collapse" id="collapseBtn" title="Collapse sidebar (⌘B)" aria-label="Collapse sidebar">
+        <svg class="ico"><use href="#i-sidebar"/></svg>
+      </button>
+    </div>
+
+    <div class="sidebar-actions">
+      <button class="new-chat" id="newChatBtn">
+        <svg class="ico"><use href="#i-plus"/></svg>
+        <span>New chat</span>
+        <kbd class="kbd-hint">⌘N</kbd>
+      </button>
+      <button class="side-search" id="searchBtn" aria-label="Search chats">
+        <svg class="ico"><use href="#i-search"/></svg>
+        <span>Search chats</span>
+        <kbd class="kbd-hint">⌘K</kbd>
+      </button>
+    </div>
+
+    <nav class="chat-list" id="chatList" aria-label="Chat history"></nav>
+
+    <div class="sidebar-foot">
+      <button class="foot-row status-row" id="statusRow" aria-label="AI status and provider">
+        <span class="dot" id="statusDot" data-state="checking"></span>
+        <span class="foot-main">
+          <span class="foot-label" id="statusLabel">Checking…</span>
+          <span class="foot-sub" id="statusSub">Detecting providers</span>
+        </span>
+        <svg class="ico ico-sm"><use href="#i-chevron"/></svg>
+      </button>
+      <button class="foot-row" id="promptsBtn">
+        <svg class="ico"><use href="#i-book"/></svg><span>Prompt library</span>
+      </button>
+      <button class="foot-row" id="shortcutsBtn">
+        <svg class="ico"><use href="#i-grid"/></svg><span>Shortcuts</span>
+      </button>
+      <button class="foot-row" id="settingsBtn">
+        <svg class="ico"><use href="#i-settings"/></svg><span>Settings</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── main ──────────────────────────────────────────────────────────── -->
+  <main class="main" id="main">
+    <header class="topbar">
+      <button class="icon-btn only-mobile" id="menuBtn" aria-label="Open menu">
+        <svg class="ico"><use href="#i-sidebar"/></svg>
+      </button>
+      <button class="icon-btn expand-btn" id="expandBtn" title="Show sidebar (⌘B)" aria-label="Show sidebar" hidden>
+        <svg class="ico"><use href="#i-sidebar"/></svg>
+      </button>
+
+      <h1 class="chat-title" id="chatTitle" title="Rename chat" tabindex="0" role="button">New chat</h1>
+
+      <div class="topbar-right">
+        <button class="pill temp-pill" id="tempChatBtn" title="Temporary chat — nothing is saved" aria-pressed="false">
+          <svg class="ico ico-sm"><use href="#i-eye"/></svg><span>Temporary</span>
+        </button>
+        <button class="pill provider-pill" id="providerPill" aria-haspopup="dialog">
+          <span class="dot" id="pillDot" data-state="checking"></span>
+          <span id="pillText">Auto</span>
+          <svg class="ico ico-sm"><use href="#i-chevron"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="messages-wrap" id="messagesWrap">
+      <div class="messages" id="messages" aria-live="polite" aria-relevant="additions text"></div>
+
+      <!-- empty state -->
+      <section class="welcome" id="welcome">
+        <svg class="welcome-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <rect x="1.25" y="1.25" width="29.5" height="29.5" rx="9" class="bm-frame"/>
+          <path d="M11 9h4.6c4.2 0 6.9 2.7 6.9 7s-2.7 7-6.9 7H11z" class="bm-d"/>
+          <path d="M11 16h6" class="bm-bar"/>
+        </svg>
+        <h2>Ask DonetClassroom anything</h2>
+        <p class="welcome-sub" id="welcomeSub">Private by default. Local when it can be, free when it can't.</p>
+        <div class="suggestions" id="suggestions"></div>
+      </section>
+    </div>
+
+    <button class="scroll-bottom" id="scrollBottomBtn" hidden aria-label="Scroll to latest">
+      <svg class="ico"><use href="#i-chevron"/></svg>
+    </button>
+
+    <!-- ── composer ────────────────────────────────────────────────────── -->
+    <div class="composer-zone">
+      <div class="notice" id="composerNotice" hidden></div>
+
+      <form class="composer" id="composer" autocomplete="off">
+        <div class="attachments" id="attachments" hidden></div>
+
+        <label class="sr-only" for="input">Message DonetClassroom</label>
+        <textarea id="input" class="composer-input" rows="1" placeholder="Ask DonetClassroom anything…"
+                  spellcheck="true" enterkeyhint="send"></textarea>
+
+        <div class="composer-bar">
+          <div class="composer-left">
+            <button type="button" class="icon-btn" id="attachBtn" title="Attach image (⌘⇧U)" aria-label="Attach image">
+              <svg class="ico"><use href="#i-paperclip"/></svg>
+            </button>
+            <button type="button" class="icon-btn" id="screenshotBtn" title="Take screenshot (⌘⇧S)" aria-label="Take screenshot">
+              <svg class="ico"><use href="#i-camera"/></svg>
+            </button>
+            <button type="button" class="icon-btn only-mobile-inline" id="fabBtnMobile" title="Shortcuts" aria-label="Open shortcuts" aria-haspopup="dialog">
+              <svg class="ico"><use href="#i-plus"/></svg>
+            </button>
+            <button type="button" class="icon-btn" id="webSearchBtn" title="Web search — not configured" aria-label="Web search (disabled)" disabled>
+              <svg class="ico"><use href="#i-globe"/></svg>
+            </button>
+            <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden />
+          </div>
+
+          <div class="composer-right">
+            <button type="button" class="model-btn" id="modelBtn" aria-haspopup="dialog" title="Choose provider and model">
+              <span class="dot" id="modelDot" data-state="checking"></span>
+              <span id="modelBtnText">Auto</span>
+            </button>
+            <button type="submit" class="send-btn" id="sendBtn" title="Send (Enter)" aria-label="Send message" disabled>
+              <svg class="ico"><use href="#i-send"/></svg>
+            </button>
+            <button type="button" class="send-btn stop-btn" id="stopBtn" title="Stop generating (Esc)" aria-label="Stop generating" hidden>
+              <svg class="ico"><use href="#i-stop"/></svg>
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <p class="composer-foot" id="composerFoot">
+        <span id="footProvider">Local first · $0 by default</span>
+      </p>
+    </div>
+
+    <div class="drop-overlay" id="dropOverlay" hidden>
+      <div class="drop-inner"><svg class="ico"><use href="#i-paperclip"/></svg><p>Drop images to attach</p></div>
+    </div>
+  </main>
+
+  <!-- floating shortcuts button -->
+  <button class="fab" id="fabBtn" title="Shortcuts" aria-label="Open shortcuts" aria-haspopup="dialog">
+    <svg class="ico"><use href="#i-plus"/></svg>
+  </button>
+  <div class="fab-panel" id="fabPanel" role="dialog" aria-label="Shortcuts" hidden>
+    <div class="fab-head"><span>Shortcuts</span>
+      <button class="icon-btn ghost" id="fabEditBtn" title="Manage shortcuts" aria-label="Manage shortcuts">
+        <svg class="ico ico-sm"><use href="#i-settings"/></svg>
+      </button>
+    </div>
+    <div class="fab-grid" id="fabGrid"></div>
+  </div>
+</div>
+
+<!-- ── model picker ──────────────────────────────────────────────────────── -->
+<div class="popover-layer" id="modelPopover" hidden>
+  <div class="popover" role="dialog" aria-label="Choose AI model">
+    <div class="pop-head">
+      <h3>AI model</h3>
+      <button class="icon-btn ghost" id="modelCloseBtn" aria-label="Close"><svg class="ico ico-sm"><use href="#i-x"/></svg></button>
+    </div>
+
+    <div class="pop-controls">
+      <div class="seg" role="tablist" aria-label="Provider">
+        <button class="seg-btn" data-provider="auto" role="tab">Auto</button>
+        <button class="seg-btn" data-provider="ollama" role="tab">Local</button>
+        <button class="seg-btn" data-provider="openrouter" role="tab">Cloud</button>
+      </div>
+      <div class="filters" id="modelFilters">
+        <button class="chip" data-filter="all">All</button>
+        <button class="chip" data-filter="free">Free</button>
+        <button class="chip" data-filter="vision">Vision</button>
+        <button class="chip" data-filter="reasoning">Reasoning</button>
+        <button class="chip" data-filter="fast">Fast</button>
+      </div>
+      <div class="pop-search">
+        <svg class="ico ico-sm"><use href="#i-search"/></svg>
+        <input type="search" id="modelSearch" placeholder="Filter models…" aria-label="Filter models" />
+      </div>
+    </div>
+
+    <div class="model-list" id="modelList" role="listbox" aria-label="Models"></div>
+
+    <div class="pop-foot">
+      <button class="btn ghost" id="refreshModelsBtn"><svg class="ico ico-sm"><use href="#i-refresh"/></svg> Refresh models</button>
+      <span class="pop-foot-note" id="modelFootNote"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ── command palette / chat search ────────────────────────────────────── -->
+<div class="popover-layer center" id="palette" hidden>
+  <div class="palette" role="dialog" aria-label="Search chats">
+    <div class="palette-input">
+      <svg class="ico"><use href="#i-search"/></svg>
+      <input type="search" id="paletteInput" placeholder="Search chats and messages…" aria-label="Search chats" />
+      <kbd>Esc</kbd>
+    </div>
+    <div class="palette-results" id="paletteResults" role="listbox"></div>
+  </div>
+</div>
+
+<!-- ── settings ─────────────────────────────────────────────────────────── -->
+<div class="popover-layer center" id="settingsModal" hidden>
+  <div class="modal" role="dialog" aria-label="Settings" aria-modal="true">
+    <div class="modal-head">
+      <h2>Settings</h2>
+      <button class="icon-btn ghost" id="settingsCloseBtn" aria-label="Close settings"><svg class="ico"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="modal-body settings-body">
+      <nav class="settings-nav" id="settingsNav" role="tablist" aria-label="Settings sections">
+        <button class="s-nav" data-tab="ai" role="tab">AI</button>
+        <button class="s-nav" data-tab="local" role="tab">Local AI</button>
+        <button class="s-nav" data-tab="cloud" role="tab">Cloud</button>
+        <button class="s-nav" data-tab="appearance" role="tab">Appearance</button>
+        <button class="s-nav" data-tab="chat" role="tab">Chat</button>
+        <button class="s-nav" data-tab="data" role="tab">Data</button>
+        <button class="s-nav" data-tab="keys" role="tab">Shortcuts</button>
+        <button class="s-nav" data-tab="about" role="tab">About</button>
+      </nav>
+      <div class="settings-panes" id="settingsPanes"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── shortcut editor ──────────────────────────────────────────────────── -->
+<div class="popover-layer center" id="shortcutModal" hidden>
+  <div class="modal narrow" role="dialog" aria-label="Manage shortcuts" aria-modal="true">
+    <div class="modal-head">
+      <h2>Shortcuts</h2>
+      <button class="icon-btn ghost" id="shortcutCloseBtn" aria-label="Close"><svg class="ico"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p class="muted small">Up to 4 quick links. Drag to reorder. Links marked as an AI reference are mentioned to the model as a source you use — DonetClassroom does not read the page for you.</p>
+      <div class="shortcut-editor" id="shortcutEditor"></div>
+      <button class="btn ghost full" id="addShortcutBtn"><svg class="ico ico-sm"><use href="#i-plus"/></svg> Add shortcut</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── prompt library ───────────────────────────────────────────────────── -->
+<div class="popover-layer center" id="promptModal" hidden>
+  <div class="modal narrow" role="dialog" aria-label="Prompt library" aria-modal="true">
+    <div class="modal-head">
+      <h2>Prompt library</h2>
+      <button class="icon-btn ghost" id="promptCloseBtn" aria-label="Close"><svg class="ico"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="prompt-list" id="promptList"></div>
+      <div class="prompt-add">
+        <input type="text" id="promptName" placeholder="Name (e.g. Study Mode)" aria-label="Prompt name" />
+        <textarea id="promptText" rows="3" placeholder="Prompt text…" aria-label="Prompt text"></textarea>
+        <button class="btn" id="savePromptBtn">Save prompt</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── first-run wizard ─────────────────────────────────────────────────── -->
+<div class="popover-layer center" id="wizard" hidden>
+  <div class="modal narrow wizard" role="dialog" aria-label="Welcome" aria-modal="true">
+    <div class="wizard-body" id="wizardBody"></div>
+  </div>
+</div>
+
+<!-- ── confirm dialog ───────────────────────────────────────────────────── -->
+<div class="popover-layer center" id="confirmModal" hidden>
+  <div class="modal tiny" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal-body">
+      <h3 id="confirmTitle">Are you sure?</h3>
+      <p class="muted" id="confirmText"></p>
+      <div class="row end gap">
+        <button class="btn ghost" id="confirmCancel">Cancel</button>
+        <button class="btn danger" id="confirmOk">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="/app.js" defer></script>
+</body>
+</html>

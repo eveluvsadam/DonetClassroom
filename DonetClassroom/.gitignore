@@ -1,0 +1,25 @@
+# Secrets
+.env
+.env.local
+*.key
+
+# Dependencies
+node_modules/
+
+# Local chat storage
+data/chats/*.json
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts (one-file)
+.claude/
